@@ -22,7 +22,7 @@ namespace E_Commerce.Persistence
 
             DbContextOptionsBuilder<ECommerceAPIContext> dbContextOptions = new();
             dbContextOptions.UseNpgsql(Configuration.ConnectionString); 
-            //dbContextOptions.UseSqlServer(Configuration.ConnectionString);
+           // dbContextOptions.UseSqlServer(Configuration.ConnectionString);
 
             return new ECommerceAPIContext(dbContextOptions.Options); // read me de yazdigi gibi artik context const. ne alacagini biliyor
         }

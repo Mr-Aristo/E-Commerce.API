@@ -26,7 +26,8 @@ namespace E_Commerce.Persistence
 
 
                 return configurationManager.GetConnectionString("PostgreSQL");
-                                                                                                    
+              //  return configurationManager.GetConnectionString("MsSQL");
+
             }
         }
     }

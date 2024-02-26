@@ -21,7 +21,7 @@ namespace E_Commerce.Persistence
             //asenkron fok beklenmiyor ve obje dispose ediliyor. Hata bu sebeple ortaya cikiyor. 
             //Scopped daha sagiliklidir
             service.AddDbContext<ECommerceAPIContext>(options => options.UseNpgsql(Configuration.ConnectionString));
-            // service.AddDbContext<ECommerceAPIContext>(options=> options.UseSqlServer(Configuration.ConnectionStrign)); //MSSQL config
+            //service.AddDbContext<ECommerceAPIContext>(options=> options.UseSqlServer(Configuration.ConnectionString)); //MSSQL config
 
             service.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
             service.AddScoped<IOrderReadRepository, OrderReadRepository>();
