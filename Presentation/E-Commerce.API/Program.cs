@@ -8,8 +8,13 @@ namespace E_Commerce.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddPersistanceServices();
+            /*  Add services to the container. */
+
+            //CORS'un istegi onaylamaasi icin ekledigimiz middleware
+            builder.Services.AddCors(options=>options.AddDefaultPolicy(
+                policy => policy.WithOrigins("http://localhost:4200/,https://localhost:4200/").AllowAnyHeader().AllowAnyMethod()));
+            // ServicesRegistration icinde bulunan Inject eden fonksiyon.
+            builder.Services.AddPersistanceServices(); 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -22,7 +27,8 @@ namespace E_Commerce.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            //CORS
+            app.UseCors();
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
