@@ -53,7 +53,16 @@ namespace E_Commerce.API.Controllers
         [HttpGet("products")]
         public async Task<IActionResult> Get()
         {
-            return Ok(productRead.GetAll());
+            //Read oldugu icin tracking false
+            return Ok(productRead.GetAll(false)); 
+
+        }
+
+        [HttpGet("products/{id}")]
+        public async Task<IActionResult> GetByID(string id)
+        {
+            //Read oldugu icin tracking false
+            return Ok(await productRead.GetByIdAsync(id,false));
 
         }
 
