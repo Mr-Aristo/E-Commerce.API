@@ -66,7 +66,7 @@ namespace E_Commerce.API.Controllers
 
         }
 
-        [HttpPost("newProduct")]
+        [HttpPost("newprd")]
 
         public async Task<IActionResult> InsertProduct(VM_Create_Product model)
         {

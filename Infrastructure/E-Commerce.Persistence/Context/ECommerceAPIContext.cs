@@ -38,10 +38,14 @@ namespace E_Commerce.Persistence.Context
                 .Entries<BaseEntitiy>();
             foreach (var data in datas)
             {
-                var result = data.State switch
+                _ = data.State switch
                 {
                     EntityState.Added => data.Entity.CreationDate = DateTime.UtcNow, // insert de bu ozellige veri gondermek zorunda degiliz. Otomatik kendisi takip edecek.
-                    EntityState.Modified => data.Entity.UpdateDate = DateTime.UtcNow
+                    EntityState.Modified => data.Entity.UpdateDate = DateTime.UtcNow,
+
+                    //delete isleminde 500 codu aldik sebebi deleteden sonra direk buraya girip son trackeri tetiklemesi. olmayan bir 
+                    //seyi modify etmeye calisiyor, bu yuzden 500 aldik.
+                    _ => DateTime.UtcNow
                 };
 
             }
