@@ -14,6 +14,7 @@ namespace E_Commerce.API.Controllers
         private readonly IProductWriteRepository productWrite;
         private readonly IOrderWriteRepository orderWrite;
         private readonly ICustomerWriteRepository customerWrite;
+
         public MyTestController(IProductReadRepository productRead,
             IProductWriteRepository productWrite,
             IOrderWriteRepository orderWrite,
@@ -54,7 +55,15 @@ namespace E_Commerce.API.Controllers
         public async Task<IActionResult> Get()
         {
             //Read oldugu icin tracking false
-            return Ok(productRead.GetAll(false)); 
+            return Ok(productRead.GetAll(false).Select(p => new
+            {
+                p.Id,
+                p.Name,
+                p.Stock,
+                p.Price,
+                p.CreationDate,
+                p.UpdateDate
+            }));
 
         }
 
@@ -62,7 +71,7 @@ namespace E_Commerce.API.Controllers
         public async Task<IActionResult> GetByID(string id)
         {
             //Read oldugu icin tracking false
-            return Ok(await productRead.GetByIdAsync(id,false));
+            return Ok(await productRead.GetByIdAsync(id, false));
 
         }
 
@@ -70,6 +79,8 @@ namespace E_Commerce.API.Controllers
 
         public async Task<IActionResult> InsertProduct(VM_Create_Product model)
         {
+
+
             await productWrite.AddAsync(new()
             {
                 Name = model.Name,
@@ -78,8 +89,10 @@ namespace E_Commerce.API.Controllers
             });
             await productWrite.SaveAsync();
 
+
             //int cast ettik.Cevidik.201 donecek OK() da olabilirdi.
             return StatusCode((int)HttpStatusCode.Created);
+
 
         }
 

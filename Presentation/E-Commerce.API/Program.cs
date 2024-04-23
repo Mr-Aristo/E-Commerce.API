@@ -1,4 +1,7 @@
-using E_Commerce.Persistence; 
+using E_Commerce.Application.Validators.Products;
+using E_Commerce.Infrastructure.Filters;
+using E_Commerce.Persistence;
+using FluentValidation.AspNetCore;
 
 namespace E_Commerce.API
 {
@@ -15,10 +18,18 @@ namespace E_Commerce.API
                 policy => policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
                    .AllowAnyHeader()
                    .AllowAnyMethod()));
-                               
+
             // ServicesRegistration icinde bulunan Inject eden fonksiyon.
-            builder.Services.AddPersistanceServices(); 
-            builder.Services.AddControllers();
+            builder.Services.AddPersistanceServices();
+
+            //Fluent validator tanimlandi. Birden fazla validator classi olabilir. Birtanesini tanimlamamiz sistemin diger
+            //validator classlarinin otomatik olarak tanimlamasini saglayacaktir.
+            builder.Services.AddControllers(options=> options.Filters.Add<ValidationFilterService>()) // => Assagida filteri bastirdik kendi filterimizi olusturduk
+                .AddFluentValidation(configuration => configuration.RegisterValidatorsFromAssemblyContaining<CreateProductValidator>())
+                //.net coreun kendi default vaild ilkesi oldugu icin girilen veriler valid degilse direkt controllere gelemeden
+                //Cliente geri donduruyor. Biz bunu manuel yapmak istedigimiz icin asagidaki tanimlamayi yaptik.
+                .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
