@@ -1,7 +1,9 @@
 ﻿using E_Commerce.Application.Repositories;
+using E_Commerce.Application.RequestParameters;
 using E_Commerce.Application.ViewModels;
 using E_Commerce.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Net;
 
 namespace E_Commerce.API.Controllers
@@ -51,11 +53,19 @@ namespace E_Commerce.API.Controllers
         //    await orderWrite.SaveAsync();
         //}
 
-        [HttpGet("products")]
-        public async Task<IActionResult> Get()
+        [HttpGet("productslist")]
+        public async Task<IActionResult> Get([FromQuery] Pagination pagination) //FromQuery fronttan query ile gelecegi icin tanimlandi.
         {
+            /*
+             *pageleme isleminde clientin kactane veri var bilmesi izin olusturulmus degisken.
+             *Items per page sabit kaliyor calismiyor. totali bilmmemiz lazim. 
+             *ProductService de list icinde nasil karsilanacagi gorulerbilir.
+             */
+            var totalCount = productRead.GetAll(false).Count();
+
             //Read oldugu icin tracking false
-            return Ok(productRead.GetAll(false).Select(p => new
+            //Binlerce verinin ayni anda sayfaya yuklenmemesi icin assagidaki gibi bir sorgu yaptik.
+            var products = productRead.GetAll(false).Select(p => new
             {
                 p.Id,
                 p.Name,
@@ -63,7 +73,22 @@ namespace E_Commerce.API.Controllers
                 p.Price,
                 p.CreationDate,
                 p.UpdateDate
-            }));
+            })
+                .Skip(pagination.Page * pagination.Size)
+                .Take(pagination.Size);
+                
+            /*once skip onra take olmali*/
+            /*Skip atlar. 1*10 da ilk onu alir. 3*10 da 30 tane alir. bu sebeple carpma kullanildi. skipde size kadarini getir dedik.*/
+            /*yani size 10 sa ve page 2 ise son ve ilk onluyu atlayip ortadaki 10luyu getirceke ama size kadar.*/
+
+
+
+            return Ok(new
+            {
+                totalCount,
+                products
+                
+            });
 
         }
 
@@ -76,7 +101,6 @@ namespace E_Commerce.API.Controllers
         }
 
         [HttpPost("newprd")]
-
         public async Task<IActionResult> InsertProduct(VM_Create_Product model)
         {
 

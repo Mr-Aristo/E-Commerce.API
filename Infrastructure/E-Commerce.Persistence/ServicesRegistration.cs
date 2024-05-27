@@ -9,9 +9,16 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 
 namespace E_Commerce.Persistence
-{
+{/// <summary>
+/// DI larin yapildigi class
+/// </summary>
     public static class ServicesRegistration
     {
+        /// <summary>
+        /// DI lari Yapan Fonksiyon
+        /// Persistece.ServiceRegistration
+        /// </summary>
+        /// <param name="service"></param>
         public static void AddPersistanceServices(this IServiceCollection service)
         {
             //Con.string islemini tek bir configuration class olusturarak erismis olduk.

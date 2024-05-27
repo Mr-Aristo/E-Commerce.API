@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace E_Commerce.Persistence
 {
     /// <summary>
-    /// Bu Congigurationun olusturulma sebebi ReadMe de yazmakta.
+    /// Bu Configurationun olusturulma sebebi ReadMe de yazmakta.
     /// dotnet cli DesignTime error.
     /// </summary>
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ECommerceAPIContext>
