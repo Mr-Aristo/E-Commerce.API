@@ -23,7 +23,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Infrastructure\E-Commerce.Infrastructure\E-Commerce.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Infrastructure\E-Commerce.Persistence\E-Commerce.Persistence.csproj" />
-    <ProjectReference Include="..\..\xUnitTest\xUnitTest.csproj" />
   </ItemGroup>
 
 </Project>
