@@ -141,6 +141,45 @@ namespace xUnitTest
         }
 
 
+        [Fact]
+        public async Task ProductUpdateTest()
+        {
+            //Arrange
+            var product = new Product
+            {
+                Id = new Guid("d91bc910-7a21-43c2-8e18-5fce8fa960ae"),
+                Name = "OldName",
+                Stock = 100,
+                Price = 10,
+                CreationDate = DateTime.Now,
+                UpdateDate = DateTime.Now
+            };
+
+            var updateModel = new VM_Update_Product
+            {
+                Id = product.Id.ToString(),
+                Name = "UpdatedName",
+                Stock = 200,
+                Price = 20
+            };
+
+            _fixture.MockProductRead.Setup(service => service.GetByIdAsync(product.Id.ToString(), false)).ReturnsAsync(product);
+            _fixture.MockProductWrite.Setup(service => service.SaveAsync()).ReturnsAsync(1);//SaveAsync int donduruyor bool degil.
+
+            //Act
+            var result = await _fixture.ProductController.UpdateProduct(updateModel);
+
+            //Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+
+            Assert.Equal(updateModel.Name, product.Name);
+            Assert.Equal(updateModel.Stock, product.Stock);
+            Assert.Equal(updateModel.Price, product.Price);
+
+            //SaveAsync() in Times.Once ile bir kere cagirilip cagirilmadiginin kontrolu.
+            _fixture.MockProductWrite.Verify(service => service.SaveAsync(), Times.Once);
+
+        }
 
 
 
