@@ -12,7 +12,7 @@ namespace E_Commerce.Persistence.Context
 {
     public class ECommerceAPIContext : DbContext
     {
-        public ECommerceAPIContext(DbContextOptions options) : base(options)
+        public ECommerceAPIContext(DbContextOptions<ECommerceAPIContext> options) : base(options)
         {
 
         }

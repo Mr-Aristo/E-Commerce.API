@@ -1,4 +1,5 @@
-﻿using E_Commerce.Domain.Entities;
+﻿using E_Commerce.Application.Repositories.Abstraction;
+using E_Commerce.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,6 @@ namespace E_Commerce.Application.Repositories
 {
     public interface IProductWriteRepository:IWriteRepository<Product>
     {
+
     }
 }

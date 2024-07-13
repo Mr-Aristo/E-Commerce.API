@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace E_Commerce.Application.Repositories
+namespace E_Commerce.Application.Repositories.Abstraction
 {
     public interface IWriteRepository<T> : IRepository<T> where T : BaseEntitiy
     {

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace E_Commerce.Application.Repositories
+namespace E_Commerce.Application.Repositories.Abstraction
 {
     /// <summary>
     /// Bu kismi en genel kullanilacak seyleri tanimlamada kullaniyoruz. 

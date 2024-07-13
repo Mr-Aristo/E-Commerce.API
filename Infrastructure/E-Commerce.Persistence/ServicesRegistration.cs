@@ -1,8 +1,10 @@
-﻿ using E_Commerce.Application.Repositories;
+﻿using E_Commerce.Application.AbstractRepositories.UnitofWork;
+using E_Commerce.Application.Repositories;
 using E_Commerce.Persistence.Concrete.Customers;
 using E_Commerce.Persistence.Concrete.Orders;
 using E_Commerce.Persistence.Concrete.Products;
 using E_Commerce.Persistence.Context;
+using E_Commerce.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,13 +31,15 @@ namespace E_Commerce.Persistence
             //Scopped daha sagiliklidir
             service.AddDbContext<ECommerceAPIContext>(options => options.UseNpgsql(Configuration.ConnectionString));
             //service.AddDbContext<ECommerceAPIContext>(options=> options.UseSqlServer(Configuration.ConnectionString)); //MSSQL config
-
+            
+            service.AddScoped<IUnitofWork, UnitOfWork>();
             service.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
             service.AddScoped<IOrderReadRepository, OrderReadRepository>();
             service.AddScoped<IProductReadRepository, ProductReadRepository>();
             service.AddScoped<ICustomerWriteRepository, CustomerWriteRepository>();
             service.AddScoped<IOrderWriteRepository, OrderWriteRepository>();
             service.AddScoped<IProductWriteRepository, ProductWriteRepository>();
+
         }
     }
 

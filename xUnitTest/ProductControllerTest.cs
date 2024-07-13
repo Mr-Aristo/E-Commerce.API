@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using E_Commerce.API.Controllers;
+using E_Commerce.Application.RequestParameters;
 using E_Commerce.Application.ViewModels;
 using E_Commerce.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;

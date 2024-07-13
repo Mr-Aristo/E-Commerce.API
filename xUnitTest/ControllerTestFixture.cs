@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using E_Commerce.API.Controllers;
+using E_Commerce.Application.Repositories;
 
 namespace xUnitTest
 {

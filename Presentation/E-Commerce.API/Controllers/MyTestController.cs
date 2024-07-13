@@ -1,4 +1,5 @@
-﻿using E_Commerce.Application.Repositories;
+﻿using E_Commerce.Application.AbstractRepositories.UnitofWork;
+using E_Commerce.Application.Repositories;
 using E_Commerce.Application.RequestParameters;
 using E_Commerce.Application.ViewModels;
 using E_Commerce.Domain.Entities;
@@ -12,22 +13,25 @@ namespace E_Commerce.API.Controllers
     [ApiController]
     public class MyTestController : Controller
     {
-        private readonly IProductReadRepository productRead;
-        private readonly IProductWriteRepository productWrite;
-        private readonly IOrderWriteRepository orderWrite;
-        private readonly ICustomerWriteRepository customerWrite;
-
+        private readonly IProductReadRepository _productRead;
+        private readonly IProductWriteRepository _productWrite;
+        private readonly IOrderWriteRepository _orderWrite;
+        private readonly ICustomerWriteRepository _customerWrite;
+        private readonly IUnitofWork _unitofWork;
         public MyTestController(IProductReadRepository productRead,
             IProductWriteRepository productWrite,
             IOrderWriteRepository orderWrite,
-            ICustomerWriteRepository customerWrite)
+            ICustomerWriteRepository customerWrite,
+            IUnitofWork unitofWork
+            )
         {
-            this.productRead = productRead;
-            this.productWrite = productWrite;
-            this.orderWrite = orderWrite;
-            this.customerWrite = customerWrite;
+            this._productRead = productRead;
+            this._productWrite = productWrite;
+            this._orderWrite = orderWrite;
+            this._customerWrite = customerWrite;
+            this._unitofWork = unitofWork;
         }
-      
+
 
         //[HttpGet]
         //public async Task Get()
@@ -57,16 +61,17 @@ namespace E_Commerce.API.Controllers
         [HttpGet("productslist")]
         public async Task<IActionResult> Get([FromQuery] Pagination pagination) //FromQuery fronttan query ile gelecegi icin tanimlandi.
         {
+            //await Task.Delay(1000); // Burda response biraz beklettik.Spinneri yakalaya bilmek icin.
             /*
              *pageleme isleminde clientin kactane veri var bilmesi izin olusturulmus degisken.
              *Items per page sabit kaliyor calismiyor. totali bilmmemiz lazim. 
              *ProductService de list icinde nasil karsilanacagi gorulerbilir.
              */
-            var totalCount = productRead.GetAll(false).Count();
+            var totalCount = _productRead.GetAll(false).Count();
 
             //Read oldugu icin tracking false
             //Binlerce verinin ayni anda sayfaya yuklenmemesi icin assagidaki gibi bir sorgu yaptik.
-            var products = productRead.GetAll(false).Select(p => new
+            var products = _productRead.GetAll(false).Select(p => new
             {
                 p.Id,
                 p.Name,
@@ -77,19 +82,41 @@ namespace E_Commerce.API.Controllers
             })
                 .Skip(pagination.Page * pagination.Size)
                 .Take(pagination.Size);
-                
+
             /*once skip onra take olmali*/
             /*Skip atlar. 1*10 da ilk onu alir. 3*10 da 30 tane alir. bu sebeple carpma kullanildi. skipde size kadarini getir dedik.*/
             /*yani size 10 sa ve page 2 ise son ve ilk onluyu atlayip ortadaki 10luyu getirceke ama size kadar.*/
 
-
+            if (products == null)
+            {
+                return NotFound("No products found.");
+            }
 
             return Ok(new
             {
                 totalCount,
                 products
-                
+
             });
+
+            //var totalCount2 =  _unitofWork.ProductReadRepository.GetAll(false).Count();
+            //var products2 =  _unitofWork.ProductReadRepository.GetAll(false).Select(p => new
+            //{
+            //    p.Id,
+            //    p.Name,
+            //    p.Stock,
+            //    p.Price,
+            //    p.CreationDate,
+            //    p.UpdateDate
+            //})
+            //   .Skip(pagination.Page * pagination.Size)
+            //   .Take(pagination.Size);
+            //return Ok(new
+            //{
+            //    totalCount2,
+            //    products2
+
+            //});
 
         }
 
@@ -97,7 +124,7 @@ namespace E_Commerce.API.Controllers
         public async Task<IActionResult> GetByID(string id)
         {
             //Read oldugu icin tracking false
-            return Ok(await productRead.GetByIdAsync(id, false));
+            return Ok(await _productRead.GetByIdAsync(id, false));
 
         }
 
@@ -106,13 +133,13 @@ namespace E_Commerce.API.Controllers
         {
 
 
-            await productWrite.AddAsync(new()
+            await _productWrite.AddAsync(new()
             {
                 Name = model.Name,
                 Stock = model.Stock,
                 Price = model.Price,
             });
-            await productWrite.SaveAsync();
+            await _productWrite.SaveAsync();
 
 
             //int cast ettik.Cevidik.201 donecek OK() da olabilirdi.
@@ -128,11 +155,11 @@ namespace E_Commerce.API.Controllers
             //Id yi ayri olarak almak yerine once id si esit olani cekip sonra update islemi yaptik.
             //update fonk kullanmadik cunku EF de verinin contexten cekilmemsi update icin yeterlidir cunku islem track ediliyor.
             //SaveChanges yapilarak kayit edilir. 
-            Product product = await productRead.GetByIdAsync(model.Id);
+            Product product = await _productRead.GetByIdAsync(model.Id);
             product.Stock = model.Stock;
             product.Price = model.Price;
             product.Name = model.Name;
-            await productWrite.SaveAsync();
+            await _productWrite.SaveAsync();
 
             return Ok();
 
@@ -141,8 +168,8 @@ namespace E_Commerce.API.Controllers
         [HttpDelete("deleteproduct/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            await productWrite.RemoveAsync(id);
-            await productWrite.SaveAsync();
+            await _productWrite.RemoveAsync(id);
+            await _productWrite.SaveAsync();
 
             return Ok();
         }
