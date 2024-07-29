@@ -41,6 +41,7 @@ namespace E_Commerce.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseStaticFiles();//wwwroot dosyasini kullanabilmek icin eklemeliyiz. Middleware 
             //CORS
             app.UseCors();
             app.UseHttpsRedirection();
