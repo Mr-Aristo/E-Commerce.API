@@ -182,26 +182,41 @@ namespace E_Commerce.API.Controllers
         //Bir post fonk oldugu icin birbirinden ayirmamiz gerekiyor bu sebeple action ekledik. angularda belirlenen actionun ismi gelecek.s
         [HttpPost("[action]")]
         public async Task<ActionResult> Upload()
-        {//Burdaki post isleminde wwwroot dosyasinda saklanacak.Program.cs de ekledik
-
-            //combine wwwroota kadar getirip altina koyulacak bir dizin olusturuyoruz.
-            //_webHostEnvironment.WebRootPath bizi wwwroota goturur.Burda yapilan wwwroot/resource/product-images
-            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "resource/product-images");
-
-            Random r = new();
-            //Gelen dosyalari yakalayacagiz.Angulardaki fileData
-            //Biz gelen file lari parametrede yakalamiyoruz.Http bodyden gelen dosyalar.
-            foreach (IFormFile file in Request.Form.Files)
+        {
+            try
             {
-                //string fullPath = Path.Combine(uploadPath, file.Name); //henuz isim gondermiyoruz
-                //Path.GetExtension(file.FileName) bu uzanti alir a.png, a.pdf vs.
-                string fullPath = Path.Combine(uploadPath, $"{r.NextDouble()}{Path.GetExtension(file.FileName)}");
-                //Buffer size(1024*1024), bir tamponun (buffer) içinde depolayabileceği maksimum veri miktarını gösterir.
-                using FileStream fileStream = new(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
-                await file.CopyToAsync(fileStream);
-                await fileStream.FlushAsync();
+                //Burdaki post isleminde wwwroot dosyasinda saklanacak.Program.cs de ekledik
+
+                //combine wwwroota kadar getirip altina koyulacak bir dizin olusturuyoruz.
+                //_webHostEnvironment.WebRootPath bizi wwwroota goturur.Burda yapilan wwwroot/resource/product-images
+                string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "resource/product-images");
+
+                //Dosya yolu yoksa olustur. Bu kosul olmadiginda dosya yolu olusmuyor ve hata aliyoruz.
+                if (!Directory.Exists(uploadPath))
+                {
+                    Directory.CreateDirectory(uploadPath);
+                }
+
+                Random r = new();
+                //Gelen dosyalari yakalayacagiz.Angulardaki fileData
+                //Biz gelen file lari parametrede yakalamiyoruz.Http bodyden gelen dosyalar.
+                foreach (IFormFile file in Request.Form.Files)
+                {
+                    //string fullPath = Path.Combine(uploadPath, file.Name); //henuz isim gondermiyoruz
+                    //Path.GetExtension(file.FileName) bu uzanti alir a.png, a.pdf vs.
+                    string fullPath = Path.Combine(uploadPath, $"{r.Next()}{Path.GetExtension(file.FileName)}");
+                    //Buffer size(1024*1024), bir tamponun (buffer) içinde depolayabileceği maksimum veri miktarını gösterir.
+                    using FileStream fileStream = new(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
+                    await file.CopyToAsync(fileStream);
+                    await fileStream.FlushAsync();
+                }
+                return Ok();
             }
-            return Ok();
+            catch (Exception ex)
+            {
+
+                throw new InvalidOperationException(ex.Message);
+            }
         }
     }
 }
