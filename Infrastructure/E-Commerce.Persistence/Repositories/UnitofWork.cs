@@ -42,9 +42,6 @@ namespace E_Commerce.Persistence.Repositories
         //    get => _productWriteRepository ??= new ProductWriteRepository(_context);
         //    set => _productWriteRepository = (ProductWriteRepository)value;
         //}
-        public IProductWriteRepository ProductWriteRepository => // yukaridaki fonksuyonun lamda hali.
-            _productWriteRepository ??= new ProductWriteRepository(_context);// ??= "null-coalescing assignment operator" 
-
 
         public IProductReadRepository ProductReadRepository =>       
              _productReadRepository ??= new ProductReadRepository(_context);
