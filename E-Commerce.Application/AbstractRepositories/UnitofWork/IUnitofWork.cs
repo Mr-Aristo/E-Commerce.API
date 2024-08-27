@@ -12,12 +12,12 @@ namespace E_Commerce.Application.AbstractRepositories.UnitofWork
     public interface IUnitofWork : IDisposable
     {
 
-        //IProductWriteRepository ProductWriteRepository { get; set; }
+        IProductWriteRepository ProductWriteRepository { get; set; }
         IProductReadRepository ProductReadRepository { get; }
-        //IOrderWriteRepository OrderWriteRepository { get; set; }
-        //IOrderReadRepository OrderReadRepository { get; set; }
-        //ICustomerWriteRepository CustomerWriteRepository { get; set; }
-        //ICustomerReadRepository CustomerReadRepository { get; set; }
+        IOrderWriteRepository OrderWriteRepository { get; set; }
+        IOrderReadRepository OrderReadRepository { get; }
+        ICustomerWriteRepository CustomerWriteRepository { get; set; }
+        ICustomerReadRepository CustomerReadRepository { get; }
 
         Task<int> SaveAsync();
     }

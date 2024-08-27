@@ -33,11 +33,14 @@ namespace E_Commerce.Persistence
             //service.AddDbContext<ECommerceAPIContext>(options=> options.UseSqlServer(Configuration.ConnectionString)); //MSSQL config
             
             service.AddScoped<IUnitofWork, UnitOfWork>();
+
             service.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
-            service.AddScoped<IOrderReadRepository, OrderReadRepository>();
-            service.AddScoped<IProductReadRepository, ProductReadRepository>();
             service.AddScoped<ICustomerWriteRepository, CustomerWriteRepository>();
+
+            service.AddScoped<IOrderReadRepository, OrderReadRepository>();
             service.AddScoped<IOrderWriteRepository, OrderWriteRepository>();
+
+            service.AddScoped<IProductReadRepository, ProductReadRepository>();
             service.AddScoped<IProductWriteRepository, ProductWriteRepository>();
 
         }

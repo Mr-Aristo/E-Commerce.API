@@ -4,6 +4,7 @@ using E_Commerce.Application.RequestParameters;
 using E_Commerce.Application.ViewModels;
 using E_Commerce.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Net;
 
@@ -72,40 +73,9 @@ namespace E_Commerce.API.Controllers
              *Items per page sabit kaliyor calismiyor. totali bilmmemiz lazim. 
              *ProductService de list icinde nasil karsilanacagi gorulerbilir.
              */
-            var totalCount = _productRead.GetAll(false).Count();
+            //var totalCount = await _productRead.GetAll(false).CountAsync();
 
-            //Read oldugu icin tracking false
-            //Binlerce verinin ayni anda sayfaya yuklenmemesi icin assagidaki gibi bir sorgu yaptik.
-            var products = _productRead.GetAll(false).Select(p => new
-            {
-                p.Id,
-                p.Name,
-                p.Stock,
-                p.Price,
-                p.CreationDate,
-                p.UpdateDate
-            })
-                .Skip(pagination.Page * pagination.Size)
-                .Take(pagination.Size);
-
-            /*once skip onra take olmali*/
-            /*Skip atlar. 1*10 da ilk onu alir. 3*10 da 30 tane alir. bu sebeple carpma kullanildi. skipde size kadarini getir dedik.*/
-            /*yani size 10 sa ve page 2 ise son ve ilk onluyu atlayip ortadaki 10luyu getirceke ama size kadar.*/
-
-            if (products == null)
-            {
-                return NotFound("No products found.");
-            }
-
-            return Ok(new
-            {
-                totalCount,
-                products
-
-            });
-
-            //var totalCount2 =  _unitofWork.ProductReadRepository.GetAll(false).Count();
-            //var products2 =  _unitofWork.ProductReadRepository.GetAll(false).Select(p => new
+            //var products = await _productRead.GetAll(false).Select(p => new
             //{
             //    p.Id,
             //    p.Name,
@@ -114,14 +84,50 @@ namespace E_Commerce.API.Controllers
             //    p.CreationDate,
             //    p.UpdateDate
             //})
-            //   .Skip(pagination.Page * pagination.Size)
-            //   .Take(pagination.Size);
+            //    .Skip(pagination.Page * pagination.Size)
+            //    .Take(pagination.Size).ToListAsync();
+
+            ///*once skip onra take olmali*/
+            ///*Skip atlar. 1*10 da ilk onu alir. 3*10 da 30 tane alir. bu sebeple carpma kullanildi. skipde size kadarini getir dedik.*/
+            ///*yani size 10 sa ve page 2 ise son ve ilk onluyu atlayip ortadaki 10luyu getirceke ama size kadar.*/
+                   
             //return Ok(new
             //{
-            //    totalCount2,
-            //    products2
+            //    products,
+            //    totalCount
 
             //});
+
+            if (_unitofWork == null)
+            {
+                throw new Exception("UnitOfWork is not initialized.");
+            }
+
+            if (_unitofWork.ProductReadRepository == null)
+            {
+                throw new Exception("ProductReadRepository could not be initialized.");
+            }
+
+            /*totalCount ve product degisken isimleri clientta karsi ayni ismde olmaz ise veri cekilemiyor.*/
+            /*Clinetda listComponent icindeki " const allProducts: { totalCount: number, products: List_Products[] } " */
+            var totalCount = await _unitofWork.ProductReadRepository.GetAll(false).CountAsync();
+            var products = await _unitofWork.ProductReadRepository.GetAll(false).Select(p => new
+            {
+                p.Id,
+                p.Name,
+                p.Stock,
+                p.Price,
+                p.CreationDate,
+                p.UpdateDate
+            })
+               .Skip(pagination.Page * pagination.Size)
+               .Take(pagination.Size).ToListAsync();
+
+            return Ok(new
+            {
+                products,
+                totalCount
+            });
 
         }
 
@@ -138,15 +144,22 @@ namespace E_Commerce.API.Controllers
         {
 
 
-            await _productWrite.AddAsync(new()
+            //await _productWrite.AddAsync(new()
+            //{
+            //    Name = model.Name,
+            //    Stock = model.Stock,
+            //    Price = model.Price,
+            //});
+            //await _productWrite.SaveAsync();
+
+
+            await _unitofWork.ProductWriteRepository.AddAsync(new()
             {
                 Name = model.Name,
                 Stock = model.Stock,
                 Price = model.Price,
             });
-            await _productWrite.SaveAsync();
-
-
+            await _unitofWork.SaveAsync();
             //int cast ettik.Cevidik.201 donecek OK() da olabilirdi.
             return StatusCode((int)HttpStatusCode.Created);
 

@@ -25,38 +25,37 @@ namespace E_Commerce.Persistence.Repositories
         private CustomerReadRepository _customerReadRepository;
         public UnitOfWork(ECommerceAPIContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
 
-        //public IProductWriteRepository ProductWriteRepository
-        //{
-        //    get
-        //    {
-        //        return _productWriteRepository ??= new ProductWriteRepository(_context);
-        //    }
-        //}
+        public IProductWriteRepository ProductWriteRepository
+        {
+            get => _productWriteRepository ??= new ProductWriteRepository(_context);
+            set => _productWriteRepository = (ProductWriteRepository)value;
+        }
 
-        //public IProductWriteRepository ProductWriteRepository
-        //{
-        //    get => _productWriteRepository ??= new ProductWriteRepository(_context);
-        //    set => _productWriteRepository = (ProductWriteRepository)value;
-        //}
+        public IProductReadRepository ProductReadRepository
+        {
+            get => _productReadRepository ??= new ProductReadRepository(_context);   
+        }
 
-        public IProductReadRepository ProductReadRepository =>       
-             _productReadRepository ??= new ProductReadRepository(_context);
-       
+        public IOrderWriteRepository OrderWriteRepository
+        {
+            get => _orderWriteRepository ??= new OrderWriteRepository(_context);
+            set => _orderWriteRepository = (OrderWriteRepository)value;
+        }
 
-        public IOrderWriteRepository OrderWriteRepository => 
-            _orderWriteRepository ??= new OrderWriteRepository(_context);
-
-        public IOrderReadRepository OrderReadRepository => 
+        public IOrderReadRepository OrderReadRepository =>
             _orderReadRepository ??= new OrderReadRepository(_context);
 
-        public ICustomerWriteRepository CustomerWriteRepository => 
-            _customerWriteRepository ??= new CustomerWriteRepository(_context);
+        public ICustomerWriteRepository CustomerWriteRepository
+        {
+            get => _customerWriteRepository ??= new CustomerWriteRepository(_context);
+            set => _customerWriteRepository = (CustomerWriteRepository)value;
+        }
 
-        public ICustomerReadRepository CustomerReadRepository => 
+        public ICustomerReadRepository CustomerReadRepository =>
             _customerReadRepository ??= new CustomerReadRepository(_context);
 
         public async Task<int> SaveAsync()
