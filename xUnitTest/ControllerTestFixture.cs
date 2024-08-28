@@ -28,7 +28,7 @@ namespace xUnitTest
             MockOrderWrite = new Mock<IOrderWriteRepository>();
             MockCustomerWrite = new Mock<ICustomerWriteRepository>();
 
-            ProductController = new MyTestController(MockProductRead.Object, MockProductWrite.Object, MockOrderWrite.Object, MockCustomerWrite.Object);
+            //ProductController = new MyTestController(MockProductRead.Object, MockProductWrite.Object, MockOrderWrite.Object, MockCustomerWrite.Object);
         }
     }
 }

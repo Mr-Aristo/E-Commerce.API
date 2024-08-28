@@ -1,4 +1,5 @@
-﻿using E_Commerce.Application.AbstractRepositories.UnitofWork;
+﻿using E_Commerce.Application.Abstractions.Services;
+using E_Commerce.Application.AbstractRepositories.UnitofWork;
 using E_Commerce.Application.Repositories;
 using E_Commerce.Application.RequestParameters;
 using E_Commerce.Application.ViewModels;
@@ -23,6 +24,7 @@ namespace E_Commerce.API.Controllers
         private readonly IUnitofWork _unitofWork;
         //IWebHostEnvironment  calistigi ortam hakkinda bilgi saglar. Path yada appname gibi seylere erismemizi saglar.
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IFileService _fileService;
 
         public MyTestController(IProductReadRepository productRead,
             IProductWriteRepository productWrite,
@@ -30,7 +32,8 @@ namespace E_Commerce.API.Controllers
             ICustomerWriteRepository customerWrite,
             IUnitofWork unitofWork,
             IWebHostEnvironment webHostEnvironment
-            )
+,
+            IFileService fileService)
         {
             this._productRead = productRead;
             this._productWrite = productWrite;
@@ -38,6 +41,7 @@ namespace E_Commerce.API.Controllers
             this._customerWrite = customerWrite;
             this._unitofWork = unitofWork;
             this._webHostEnvironment = webHostEnvironment;
+            this._fileService = fileService;
         }
 
 
@@ -247,31 +251,32 @@ namespace E_Commerce.API.Controllers
         {
             try
             {
-                //Burdaki post isleminde wwwroot dosyasinda saklanacak.Program.cs de ekledik
+                ////Burdaki post isleminde wwwroot dosyasinda saklanacak.Program.cs de ekledik
 
-                //combine wwwroota kadar getirip altina koyulacak bir dizin olusturuyoruz.
-                //_webHostEnvironment.WebRootPath bizi wwwroota goturur.Burda yapilan wwwroot/resource/product-images
-                string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "resource/product-images");
+                ////combine wwwroota kadar getirip altina koyulacak bir dizin olusturuyoruz.
+                ////_webHostEnvironment.WebRootPath bizi wwwroota goturur.Burda yapilan wwwroot/resource/product-images
+                //string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "resource/product-images");
 
-                //Dosya yolu yoksa olustur. Bu kosul olmadiginda dosya yolu olusmuyor ve hata aliyoruz.
-                if (!Directory.Exists(uploadPath))
-                {
-                    Directory.CreateDirectory(uploadPath);
-                }
+                ////Dosya yolu yoksa olustur. Bu kosul olmadiginda dosya yolu olusmuyor ve hata aliyoruz.
+                //if (!Directory.Exists(uploadPath))
+                //{
+                //    Directory.CreateDirectory(uploadPath);
+                //}
 
-                Random r = new();
-                //Gelen dosyalari yakalayacagiz.Angulardaki fileData
-                //Biz gelen file lari parametrede yakalamiyoruz.Http bodyden gelen dosyalar.
-                foreach (IFormFile file in Request.Form.Files)
-                {
-                    //string fullPath = Path.Combine(uploadPath, file.Name); //henuz isim gondermiyoruz
-                    //Path.GetExtension(file.FileName) bu uzanti alir a.png, a.pdf vs.
-                    string fullPath = Path.Combine(uploadPath, $"{r.Next()}{Path.GetExtension(file.FileName)}");
-                    //Buffer size(1024*1024), bir tamponun (buffer) içinde depolayabileceği maksimum veri miktarını gösterir.
-                    using FileStream fileStream = new(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
-                    await file.CopyToAsync(fileStream);
-                    await fileStream.FlushAsync();
-                }
+                //Random r = new();
+                ////Gelen dosyalari yakalayacagiz.Angulardaki fileData
+                ////Biz gelen file lari parametrede yakalamiyoruz.Http bodyden gelen dosyalar.
+                //foreach (IFormFile file in Request.Form.Files)
+                //{
+                //    //string fullPath = Path.Combine(uploadPath, file.Name); //henuz isim gondermiyoruz
+                //    //Path.GetExtension(file.FileName) bu uzanti alir a.png, a.pdf vs.
+                //    string fullPath = Path.Combine(uploadPath, $"{r.Next()}{Path.GetExtension(file.FileName)}");
+                //    //Buffer size(1024*1024), bir tamponun (buffer) içinde depolayabileceği maksimum veri miktarını gösterir.
+                //    using FileStream fileStream = new(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
+                //    await file.CopyToAsync(fileStream);
+                //    await fileStream.FlushAsync();
+                //}
+                await _fileService.UploadAsync("resource/product-images", Request.Form.Files);
                 return Ok();
             }
             catch (Exception ex)
