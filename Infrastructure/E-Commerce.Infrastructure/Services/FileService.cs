@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using E_Commerce.Application.Abstractions.Services;
+using E_Commerce.Infrastructure.Operations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -32,7 +33,7 @@ namespace E_Commerce.Infrastructure.Services
 
             foreach (IFormFile file in files)
             {
-                string fileNewName = await FileRenameAsync(file.FileName);
+                string fileNewName = await FileRenameAsync(uploadPath,file.FileName);
 
                 bool result = await CopyFileAsync($"{uploadPath}\\{fileNewName}", file);
                 datas.Add((fileNewName, $"{uploadPath}\\{fileNewName}"));
@@ -61,7 +62,7 @@ namespace E_Commerce.Infrastructure.Services
 
                 return true;
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
                 //todo log!
 
@@ -69,11 +70,54 @@ namespace E_Commerce.Infrastructure.Services
             }
         }
 
-        public Task<string> FileRenameAsync(string fileName)
+        //karmasik olan bu fonksiyonda yukklenen dosyadan ayni isimde iki tane varsa -1, -2 seklinde sayilandirma yapaagiz.
+        //first true oldugunda ayni dosyadan yok demek, falsa girerse dosya adina ekleme yapacagiz. 
+        private async Task<string> FileRenameAsync(string path, string fileName, bool first = true)
         {
-            throw new NotImplementedException();
+            await Task.Run(async () =>
+             {
+                 string extention = Path.GetExtension(fileName);
+                 string newFileName = String.Empty;
+
+                 if (first)
+                 {
+                     string oldName = Path.GetFileNameWithoutExtension(fileName);
+                     newFileName = $"{NameOperation.CharacterRegulatory(oldName)}{extention}";
+                 }
+                 else
+                 {
+                     newFileName = fileName;
+                     int indexNo1 = newFileName.IndexOf("-");
+                     if (indexNo1 == -1)
+                     {
+                         newFileName = $"{Path.GetFileNameWithoutExtension(newFileName)}-2{extention}";
+                     }
+                     else
+                     {
+                         int indexNo2 = newFileName.IndexOf(".");
+                         string fileNo = newFileName.Substring(indexNo1, indexNo2 - indexNo1 - 1);
+                         //ahmet-123.png noktaya kadr 5 hepsi 9, 9-5 = 4, 4 noktaya geliyor birde -1 yaparak gelen sayiyi aldik.
+
+                         int _fileNo = int.Parse(fileNo);
+                         _fileNo++;
+                         newFileName = newFileName.Remove(indexNo1, indexNo2 - indexNo1 - 1) // "-" den sonrasini silip _fileNo ile elde edilen sayiyi ekledik.
+                         .Insert(indexNo1, _fileNo.ToString());
+                     }
+                 }
+
+
+
+                 if (File.Exists($"{path}\\{newFileName}"))
+                     return await FileRenameAsync(path, newFileName, false);
+                 else
+                     return newFileName;
+
+
+             });
+
+            return String.Empty;
         }
 
-       
+
     }
 }
