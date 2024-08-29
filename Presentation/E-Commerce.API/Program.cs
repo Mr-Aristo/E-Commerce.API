@@ -1,5 +1,6 @@
 using E_Commerce.Application.Validators.Products;
 using E_Commerce.Infrastructure.Filters;
+using E_Commerce.Infrastructure;
 using E_Commerce.Persistence;
 using FluentValidation.AspNetCore;
 
@@ -21,6 +22,7 @@ namespace E_Commerce.API
 
             // ServicesRegistration icinde bulunan Inject eden fonksiyon.
             builder.Services.AddPersistanceServices();
+            builder.Services.AddInfrastructureServices();
 
             //Fluent validator tanimlandi. Birden fazla validator classi olabilir. Birtanesini tanimlamamiz sistemin diger
             //validator classlarinin otomatik olarak tanimlamasini saglayacaktir.
