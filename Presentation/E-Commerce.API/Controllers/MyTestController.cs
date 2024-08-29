@@ -18,9 +18,7 @@ namespace E_Commerce.API.Controllers
     public class MyTestController : Controller
     {
         private readonly IProductReadRepository _productRead;
-        private readonly IProductWriteRepository _productWrite;
-        private readonly IOrderWriteRepository _orderWrite;
-        private readonly ICustomerWriteRepository _customerWrite;
+        private readonly IProductWriteRepository _productWrite;        
         private readonly IUnitofWork _unitofWork;
         //IWebHostEnvironment  calistigi ortam hakkinda bilgi saglar. Path yada appname gibi seylere erismemizi saglar.
         private readonly IWebHostEnvironment _webHostEnvironment;
@@ -36,9 +34,7 @@ namespace E_Commerce.API.Controllers
             IFileService fileService)
         {
             this._productRead = productRead;
-            this._productWrite = productWrite;
-            this._orderWrite = orderWrite;
-            this._customerWrite = customerWrite;
+            this._productWrite = productWrite;     
             this._unitofWork = unitofWork;
             this._webHostEnvironment = webHostEnvironment;
             this._fileService = fileService;
@@ -99,13 +95,7 @@ namespace E_Commerce.API.Controllers
                 ///*Skip atlar. 1*10 da ilk onu alir. 3*10 da 30 tane alir. bu sebeple carpma kullanildi. skipde size kadarini getir dedik.*/
                 ///*yani size 10 sa ve page 2 ise son ve ilk onluyu atlayip ortadaki 10luyu getirceke ama size kadar.*/
 
-                //return Ok(new
-                //{
-                //    products,
-                //    totalCount
-
-                //});
-
+            
                 if (_unitofWork == null)
                 {
                     Log.Warning("UnitOfWork is not initialized");
@@ -245,44 +235,25 @@ namespace E_Commerce.API.Controllers
             }
         }
 
-        //Bir post fonk oldugu icin birbirinden ayirmamiz gerekiyor bu sebeple action ekledik. angularda belirlenen actionun ismi gelecek.s
+        //Bir post fonk oldugu icin birbirinden ayirmamiz gerekiyor bu sebeple action ekledik. angularda belirlenen actionun ismi gelecek.s     
         [HttpPost("[action]")]
         public async Task<ActionResult> Upload()
         {
+            //todo Directory path not found hatasi. cozulmeli. 
             try
             {
-                ////Burdaki post isleminde wwwroot dosyasinda saklanacak.Program.cs de ekledik
-
-                ////combine wwwroota kadar getirip altina koyulacak bir dizin olusturuyoruz.
-                ////_webHostEnvironment.WebRootPath bizi wwwroota goturur.Burda yapilan wwwroot/resource/product-images
-                //string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "resource/product-images");
-
-                ////Dosya yolu yoksa olustur. Bu kosul olmadiginda dosya yolu olusmuyor ve hata aliyoruz.
-                //if (!Directory.Exists(uploadPath))
-                //{
-                //    Directory.CreateDirectory(uploadPath);
-                //}
-
-                //Random r = new();
-                ////Gelen dosyalari yakalayacagiz.Angulardaki fileData
-                ////Biz gelen file lari parametrede yakalamiyoruz.Http bodyden gelen dosyalar.
-                //foreach (IFormFile file in Request.Form.Files)
-                //{
-                //    //string fullPath = Path.Combine(uploadPath, file.Name); //henuz isim gondermiyoruz
-                //    //Path.GetExtension(file.FileName) bu uzanti alir a.png, a.pdf vs.
-                //    string fullPath = Path.Combine(uploadPath, $"{r.Next()}{Path.GetExtension(file.FileName)}");
-                //    //Buffer size(1024*1024), bir tamponun (buffer) içinde depolayabileceği maksimum veri miktarını gösterir.
-                //    using FileStream fileStream = new(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
-                //    await file.CopyToAsync(fileStream);
-                //    await fileStream.FlushAsync();
-                //}
-                await _fileService.UploadAsync("resource/product-images", Request.Form.Files);
-                return Ok();
+                var result = await _fileService.UploadAsync("resource/product-images", Request.Form.Files);
+                return Ok(result);
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                Log.Error(ex, "Directory path not found.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Directory path not found: " + ex.Message);
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "An error occured while uploading file!");
-                throw new InvalidOperationException("An error occured while uploading file!" + ex.Message);
+                Log.Error(ex, "An error occurred while uploading file!");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while uploading file: " + ex.Message);
             }
         }
     }
