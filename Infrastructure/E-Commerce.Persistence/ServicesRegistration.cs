@@ -47,6 +47,15 @@ namespace E_Commerce.Persistence
     }
 
 }
+/*
+     * Best Practices
+    1. Use transient for stateless services.
+    2. Use scoped for services tied to the request.
+    3. Use singleton sparingly for stateful and expensive services.
+    4. Be mindful of thread safety in singleton services.
+    5. Avoid Service locator Anti-Pattern.
+    6. Dispose of scope services
+ */
 
 /*
     -Not kodun icine congig yazilmaz. 
