@@ -3,6 +3,8 @@ using E_Commerce.Infrastructure.Filters;
 using E_Commerce.Infrastructure;
 using E_Commerce.Persistence;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 namespace E_Commerce.API
 {
@@ -31,6 +33,14 @@ namespace E_Commerce.API
                 //.net coreun kendi default vaild ilkesi oldugu icin girilen veriler valid degilse direkt controllere gelemeden
                 //Cliente geri donduruyor. Biz bunu manuel yapmak istedigimiz icin asagidaki tanimlamayi yaptik.
                 .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
+
+            builder.Services.AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ReportApiVersions = true;
+                options.ApiVersionReader = new HeaderApiVersionReader("x-api-version");
+            });
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
