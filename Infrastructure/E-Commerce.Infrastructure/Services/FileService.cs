@@ -39,7 +39,7 @@ namespace E_Commerce.Infrastructure.Services
                 //datas.Add((fileNewName, $"{uploadPath}\\{fileNewName}"));
                 //results.Add(result);
                 bool result = await CopyFileAsync(Path.Combine(uploadPath, fileNewName), file);
-                datas.Add((fileNewName, Path.Combine(uploadPath, fileNewName)));
+                datas.Add((fileNewName, Path.Combine(rootPath, fileNewName)));
                 results.Add(result);
             }
             if (results.TrueForAll(r => r.Equals(true)))

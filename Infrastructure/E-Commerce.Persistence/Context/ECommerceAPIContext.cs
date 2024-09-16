@@ -20,6 +20,11 @@ namespace E_Commerce.Persistence.Context
         public DbSet<Product> Products { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<Files> Files { get; set; }
+        public DbSet<ProductImageFile> ProductImageFiles { get; set; }
+        public DbSet<InvoiceFile> InvoiceFiles { get; set; }
+
+
 
         /// <summary>
         /// Bu kisimda  Interceptor yani her yaratilan veride createdDate ve updateDate'i yenilememek icin bir islem yapiyoruz

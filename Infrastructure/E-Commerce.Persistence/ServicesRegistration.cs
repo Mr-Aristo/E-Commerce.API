@@ -1,7 +1,11 @@
-﻿using E_Commerce.Application.AbstractRepositories.UnitofWork;
+﻿using E_Commerce.Application.AbstractRepositories;
+using E_Commerce.Application.AbstractRepositories.UnitofWork;
 using E_Commerce.Application.Repositories;
 using E_Commerce.Persistence.Concrete.Customers;
+using E_Commerce.Persistence.Concrete.File;
+using E_Commerce.Persistence.Concrete.Invoice;
 using E_Commerce.Persistence.Concrete.Orders;
+using E_Commerce.Persistence.Concrete.ProductImage;
 using E_Commerce.Persistence.Concrete.Products;
 using E_Commerce.Persistence.Context;
 using E_Commerce.Persistence.Repositories;
@@ -31,7 +35,7 @@ namespace E_Commerce.Persistence
             //Scopped daha sagiliklidir
             service.AddDbContext<ECommerceAPIContext>(options => options.UseNpgsql(Configuration.ConnectionString));
             //service.AddDbContext<ECommerceAPIContext>(options=> options.UseSqlServer(Configuration.ConnectionString)); //MSSQL config
-            
+
             service.AddScoped<IUnitofWork, UnitOfWork>();
 
             service.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
@@ -43,6 +47,14 @@ namespace E_Commerce.Persistence
             service.AddScoped<IProductReadRepository, ProductReadRepository>();
             service.AddScoped<IProductWriteRepository, ProductWriteRepository>();
 
+            service.AddScoped<IWriteFile, WriteFile>();
+            service.AddScoped<IReadFile, ReadFile>();
+
+            service.AddScoped<IWriteProductImageFile, WriteProductImageFile>();
+            service.AddScoped<IReadProductImageFile, ReadProductImageFile>();
+
+            service.AddScoped<IWriteInvoiceFile, WriteInvoiceFile>();
+            service.AddScoped<IReadInvoiceFile, ReadInvoiceFile>();
         }
     }
 

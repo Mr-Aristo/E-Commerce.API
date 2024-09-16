@@ -14,6 +14,8 @@ namespace E_Commerce.Domain.Entities.Common
      /// </summary>
         public Guid Id { get; set; } //Guid is uniqe indentify
         public DateTime CreationDate { get; set; }
-        public DateTime UpdateDate { get; set; }
+
+        //TPH icin kullanildi. Bu columun olmasini istemeigimiz classlarda cagirmayacaz. s
+        virtual public DateTime UpdateDate { get; set; } 
     }
 }

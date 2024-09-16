@@ -1,7 +1,11 @@
-﻿using E_Commerce.Application.AbstractRepositories.UnitofWork;
+﻿using E_Commerce.Application.AbstractRepositories;
+using E_Commerce.Application.AbstractRepositories.UnitofWork;
 using E_Commerce.Application.Repositories;
 using E_Commerce.Persistence.Concrete.Customers;
+using E_Commerce.Persistence.Concrete.File;
+using E_Commerce.Persistence.Concrete.Invoice;
 using E_Commerce.Persistence.Concrete.Orders;
+using E_Commerce.Persistence.Concrete.ProductImage;
 using E_Commerce.Persistence.Concrete.Products;
 using E_Commerce.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +27,12 @@ namespace E_Commerce.Persistence.Repositories
         private OrderReadRepository _orderReadRepository;
         private CustomerWriteRepository _customerWriteRepository;
         private CustomerReadRepository _customerReadRepository;
+        private WriteFile _writeFile;
+        private ReadFile _readFile;
+        private WriteProductImageFile _writeProductImage;
+        private ReadProductImageFile _readProductImage;
+        private WriteInvoiceFile _writeInvoice;
+        private ReadInvoiceFile _readInvoice;
         public UnitOfWork(ECommerceAPIContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -37,7 +47,7 @@ namespace E_Commerce.Persistence.Repositories
 
         public IProductReadRepository ProductReadRepository
         {
-            get => _productReadRepository ??= new ProductReadRepository(_context);   
+            get => _productReadRepository ??= new ProductReadRepository(_context);
         }
 
         public IOrderWriteRepository OrderWriteRepository
@@ -57,6 +67,30 @@ namespace E_Commerce.Persistence.Repositories
 
         public ICustomerReadRepository CustomerReadRepository =>
             _customerReadRepository ??= new CustomerReadRepository(_context);
+
+        public IWriteFile WriteFile
+        {
+            get => _writeFile ??= new WriteFile(_context);
+            set => _writeFile = (WriteFile)value;
+        }
+
+        public IReadFile ReadFile => _readFile ??= new ReadFile(_context);
+
+        public IWriteProductImageFile WriteProductImageFile
+        {
+            get => _writeProductImage ??= new WriteProductImageFile(_context);
+            set => _writeProductImage = (WriteProductImageFile)value;
+        }
+
+        public IReadProductImageFile ReadProductImageFile => _readProductImage ??= new ReadProductImageFile(_context);
+
+        public IWriteInvoiceFile WriteInvoiceFile
+        {
+            get => _writeInvoice ??= new WriteInvoiceFile(_context);
+            set => _writeInvoice = (WriteInvoiceFile)value;
+        }
+
+        public IReadInvoiceFile ReadInvoiceFile => _readInvoice ??= new ReadInvoiceFile(_context);
 
         public async Task<int> SaveAsync()
         {
