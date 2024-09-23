@@ -11,6 +11,7 @@ namespace E_Commerce.Domain.Entities.Common
      /// Common dosyasi altinda bu clasi olusturmamizin sebebi
      /// Diger entitilerde ortak olacak ozellikleri tek bir 
      /// yerde tanimlayarak kod tekrarindan kurtulmak
+     /// Table per hierachy kullandik.
      /// </summary>
         public Guid Id { get; set; } //Guid is uniqe indentify
         public DateTime CreationDate { get; set; }

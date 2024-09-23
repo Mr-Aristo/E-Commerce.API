@@ -16,6 +16,5 @@ namespace E_Commerce.Application.Repositories.Abstraction
     {
         DbSet<T> Table { get; }
 
-
     }
 }
