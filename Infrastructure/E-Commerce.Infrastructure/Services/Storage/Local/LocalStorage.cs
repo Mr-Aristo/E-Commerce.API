@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace E_Commerce.Infrastructure.Services.Storage.Local
 {
+    /*FileServicenin karsiligi*/
     public class LocalStorage : Storage, ILocalStorage
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
@@ -14,27 +15,27 @@ namespace E_Commerce.Infrastructure.Services.Storage.Local
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task DeleteAsync(string pathOrContainerName, string fileName)
-            => File.Delete($"{pathOrContainerName}\\{fileName}");
+        public async Task DeleteAsync(string path, string fileName)
+            => File.Delete($"{path}\\{fileName}");
 
-        public List<string> GetFiles(string pathOrContainerName)
+        public List<string> GetFiles(string path)
         {
-            DirectoryInfo directoryInfo = new(pathOrContainerName);
+            DirectoryInfo directoryInfo = new(path);
             return directoryInfo.GetFiles().Select(f => f.Name).ToList();
         }
 
-        public bool HasFile(string pathOrContainerName, string fileName)
-            => File.Exists($"{pathOrContainerName}\\{fileName}");
+        public bool HasFile(string path, string fileName)
+            => File.Exists($"{path}\\{fileName}");
 
         async Task<bool> CopyFileAsync(string path, IFormFile file)
         {
             try
             {
-
                 await using FileStream fileStream = new(path, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
 
                 await file.CopyToAsync(fileStream);
                 await fileStream.FlushAsync();
+
                 return true;
             }
             catch (Exception ex)
@@ -42,12 +43,11 @@ namespace E_Commerce.Infrastructure.Services.Storage.Local
                 //todo log
                 throw ex;
             }
-
         }
 
-        public async Task<List<(string fileName, string pathOrContainerName)>> UploadAsync(string pathOrContainerName, IFormFileCollection files)
+        public async Task<List<(string fileName, string pathOrContainerName)>> UploadAsync(string path, IFormFileCollection files)
         {
-            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, pathOrContainerName);
+            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, path);
 
             if (!Directory.Exists(uploadPath))
                 Directory.CreateDirectory(uploadPath);
@@ -56,14 +56,12 @@ namespace E_Commerce.Infrastructure.Services.Storage.Local
 
             foreach (var file in files)
             {
-                string fileNewName = await FileRenameAsync(pathOrContainerName, file.Name, HasFile);
+                string fileNewName = await FileRenameAsync(path, file.Name, HasFile);
                 await CopyFileAsync($"{uploadPath}\\{file}", file);
-                datas.Add((fileNewName, $"{pathOrContainerName}\\{fileNewName}"));
+                datas.Add((fileNewName, $"{path}\\{fileNewName}"));
 
             }
             return datas;
         }
-
-
     }
 }

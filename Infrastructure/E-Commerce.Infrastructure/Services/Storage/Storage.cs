@@ -7,6 +7,7 @@ using E_Commerce.Infrastructure.Operations;
 
 namespace E_Commerce.Infrastructure.Services.Storage
 {
+    /*File isim degisiminin azure aws gibi yerlerdede takrar bu fonksiyonu yazmamak icin class ile genislettik.*/
     public class Storage
     {
         protected delegate bool HasFile(string pathOrContainerName, string name);

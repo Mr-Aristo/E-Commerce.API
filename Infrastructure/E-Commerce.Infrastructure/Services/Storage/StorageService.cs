@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace E_Commerce.Infrastructure.Services.Storage
 {
+    //Clientin kullanacagi sinif
     public class StorageService : IStorageService
     {
         readonly IStorage _storage;

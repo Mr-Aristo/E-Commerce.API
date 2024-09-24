@@ -1,6 +1,7 @@
 ﻿using E_Commerce.Application.AbstractRepositories;
 using E_Commerce.Application.AbstractRepositories.UnitofWork;
 using E_Commerce.Application.Repositories;
+using E_Commerce.Infrastructure.Services.Storage;
 using E_Commerce.Persistence.Concrete.Customers;
 using E_Commerce.Persistence.Concrete.File;
 using E_Commerce.Persistence.Concrete.Invoice;
@@ -9,6 +10,7 @@ using E_Commerce.Persistence.Concrete.ProductImage;
 using E_Commerce.Persistence.Concrete.Products;
 using E_Commerce.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client.Extensions.Msal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +35,7 @@ namespace E_Commerce.Persistence.Repositories
         private ReadProductImageFile _readProductImage;
         private WriteInvoiceFile _writeInvoice;
         private ReadInvoiceFile _readInvoice;
+      //  private StorageService _storageService;
         public UnitOfWork(ECommerceAPIContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));

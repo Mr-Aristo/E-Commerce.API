@@ -16,8 +16,10 @@ namespace E_Commerce.Infrastructure.Services.Storage.Azure
     public class AzureStorage : Storage, IAzureStorage
     {
         readonly BlobServiceClient _blobServiceClient;
-        BlobContainerClient _blobContainerClient;
 
+        //Azurede path ,file  in karsiligi Containerdir. Dockerdaki gibi degil.
+        BlobContainerClient _blobContainerClient; 
+        //blob (Binary large object storage)
         public AzureStorage(IConfiguration configuration)
         {
             _blobServiceClient = new(configuration["Storage:Azure"]);

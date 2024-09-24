@@ -5,6 +5,9 @@ using E_Commerce.Persistence;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using E_Commerce.Infrastructure.Services.Storage.Local;
+using E_Commerce.Infrastructure.Services.Storage.Azure;
+using E_Commerce.Infrastructure.Enums;
 
 namespace E_Commerce.API
 {
@@ -25,6 +28,12 @@ namespace E_Commerce.API
             // ServicesRegistration icinde bulunan Inject eden fonksiyon.
             builder.Services.AddPersistanceServices();
             builder.Services.AddInfrastructureServices();
+
+            builder.Services.AddStorage<LocalStorage>();
+
+            /*iki fakrli kullanimi*/
+            //builder.Services.AddStorage<AzureStorage>();
+            //builder.Services.AddStorage(StorageType.Azure);
 
             //Fluent validator tanimlandi. Birden fazla validator classi olabilir. Birtanesini tanimlamamiz sistemin diger
             //validator classlarinin otomatik olarak tanimlamasini saglayacaktir.

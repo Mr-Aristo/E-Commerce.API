@@ -1,4 +1,5 @@
 ﻿using E_Commerce.Application.Abstractions.Services;
+using E_Commerce.Application.Abstractions.Storage;
 using E_Commerce.Application.AbstractRepositories.UnitofWork;
 using E_Commerce.Application.Repositories;
 using E_Commerce.Application.RequestParameters;
@@ -23,6 +24,7 @@ namespace E_Commerce.API.Controllers
         //IWebHostEnvironment  calistigi ortam hakkinda bilgi saglar. Path yada appname gibi seylere erismemizi saglar.
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IFileService _fileService;
+        private readonly IStorageService _storageService;
 
         public MyTestController(IProductReadRepository productRead,
             IProductWriteRepository productWrite,
@@ -31,13 +33,15 @@ namespace E_Commerce.API.Controllers
             IUnitofWork unitofWork,
             IWebHostEnvironment webHostEnvironment
 ,
-            IFileService fileService)
+            IFileService fileService,
+            IStorageService storageService)
         {
             this._productRead = productRead;
             this._productWrite = productWrite;
             this._unitofWork = unitofWork;
             this._webHostEnvironment = webHostEnvironment;
             this._fileService = fileService;
+            _storageService = storageService;
         }
 
 
@@ -243,26 +247,31 @@ namespace E_Commerce.API.Controllers
             //todo Directory path not found hatasi. cozulmeli. 
             try
             {
+                var result =   await _storageService.UploadAsync("resource/files",Request.Form.Files);
+                //todo  _storageService  calismiyor 500 error 
+
                 //var result = await _fileService.UploadAsync("resource/product-images", Request.Form.Files);
-                //await _unitofWork.WriteProductImageFile.AddRangeAsync(result.Select(x => new ProductImageFile() { 
-
-                //   FileName = x.fileName,
-                //   Path = x.path
-                //}).ToList());
-
-                var result = await _fileService.UploadAsync("resource/invoice", Request.Form.Files);
-                await _unitofWork.WriteInvoiceFile.AddRangeAsync(result.Select(x => new InvoiceFile()
+                await _unitofWork.WriteProductImageFile.AddRangeAsync(result.Select(x => new ProductImageFile()
                 {
                     FileName = x.fileName,
-                    Path = x.path,
-                    Price = new Random().Next()
+                    Path = x.pathOrContainerName,
+                    Storage = _storageService.StorageName
                 }).ToList());
 
-                await _unitofWork.SaveAsync();
+                //var result = await _fileService.UploadAsync("resource/invoice", Request.Form.Files);
+                //await _unitofWork.WriteInvoiceFile.AddRangeAsync(result.Select(x => new InvoiceFile()
+                //{
+                //    FileName = x.fileName,
+                //    Path = x.path,
+                //    Price = new Random().Next()
+                //}).ToList());
+
+                //await _unitofWork.SaveAsync();
 
                 //var d1 = _unitofWork.ReadFile.GetAll(false);
                 //var d2 = _unitofWork.ReadInvoiceFile.GetAll(false);
                 //var d3 = _unitofWork.ReadProductImageFile.GetAll(false);
+
                 return Ok();
             }
             catch (DirectoryNotFoundException ex)

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace E_Commerce.Application.Abstractions.Storage.Local
 {
-    public interface ILocalStorage : IStorage
+    public interface ILocalStorage : IStorage 
     {
+        /*Bu interface yi implemente eden IStoragenin butun memberlarini implemente etmek zorunda*/
     }
 }

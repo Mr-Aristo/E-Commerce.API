@@ -1,4 +1,5 @@
-﻿using E_Commerce.Application.AbstractRepositories;
+﻿using E_Commerce.Application.Abstractions.Storage;
+using E_Commerce.Application.AbstractRepositories;
 using E_Commerce.Application.AbstractRepositories;
 using E_Commerce.Application.AbstractRepositories;
 using E_Commerce.Application.Repositories;
@@ -32,6 +33,8 @@ namespace E_Commerce.Application.AbstractRepositories.UnitofWork
 
         IWriteInvoiceFile WriteInvoiceFile { get; set; }
         IReadInvoiceFile ReadInvoiceFile { get; }
+
+       // IStorageService StorageService { get; set; }
 
 
 
