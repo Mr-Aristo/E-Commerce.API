@@ -36,7 +36,7 @@ namespace E_Commerce.Persistence
                 .Build();                                     // IConfigurationRoot objesini oluşturur
 
             // Connection string'i appsettings.json içinden alıyoruz
-            var connectionString = configuration.GetConnectionString("PostgresConnection");
+            var connectionString = configuration.GetConnectionString("PostgreSQL");
 
             DbContextOptionsBuilder<ECommerceAPIContext> dbContextOptions = new();
 
