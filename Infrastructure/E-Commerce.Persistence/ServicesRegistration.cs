@@ -25,7 +25,7 @@ namespace E_Commerce.Persistence
         /// Persistece.ServiceRegistration
         /// </summary>
         /// <param name="service"></param>
-        public static void AddPersistanceServices(this IServiceCollection service)
+        public static void AddPersistanceServices(this IServiceCollection service,IConfiguration configuration)
         {
             //Con.string islemini tek bir configuration class olusturarak erismis olduk.
             //ServiceLifetime.Singleton ekledik cunku context dispose ediliyor.Fark IRepo lari ayni anda cagirdigimizde birden fazla context objesi olusuyor.
@@ -33,8 +33,14 @@ namespace E_Commerce.Persistence
             //Not Scopped kullanilirsa Cotrollerde task kullanildigi taktirde problem yine cozulur.Controller icindeki fonk. asenkron olmadigindan, fonk icinde kullanilan
             //asenkron fok beklenmiyor ve obje dispose ediliyor. Hata bu sebeple ortaya cikiyor. 
             //Scopped daha sagiliklidir
-            service.AddDbContext<ECommerceAPIContext>(options => options.UseNpgsql(Configuration.ConnectionString));
+
+            //service.AddDbContext<ECommerceAPIContext>(options => options.UseNpgsql(Configuration.ConnectionString));
             //service.AddDbContext<ECommerceAPIContext>(options=> options.UseSqlServer(Configuration.ConnectionString)); //MSSQL config
+
+
+            //Bu yapi daha verimli ve ekstra bir config istemiyor. Yukardaki db context tanimi verimli degil.
+            var connectionString = configuration.GetConnectionString("PostgreSQL");
+            service.AddDbContext<ECommerceAPIContext>(options => options.UseNpgsql(connectionString));
 
             service.AddScoped<IUnitofWork, UnitOfWork>();
 

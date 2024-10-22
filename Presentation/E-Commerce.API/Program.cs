@@ -26,7 +26,8 @@ namespace E_Commerce.API
                    .AllowAnyMethod()));
 
             // ServicesRegistration icinde bulunan Inject eden fonksiyon.
-            builder.Services.AddPersistanceServices();
+            var configuration = builder.Configuration;
+            builder.Services.AddPersistanceServices(configuration);
             builder.Services.AddInfrastructureServices();
 
             builder.Services.AddStorage<LocalStorage>();
